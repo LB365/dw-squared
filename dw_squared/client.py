@@ -1,18 +1,19 @@
 from datetime import datetime as dt
-from numpy.core.fromnumeric import reshape
 
 import pandas as pd
 import datawrapper
 
-from dw_squared.transform import (
-    generate_seasonal_frame,
-    compute_seasonal_stats)
-
 
 class DWSquared():
-    def __init__(self, height: int = 600, width: int = 600, token=None):
+    def __init__(self,
+                 height: int = 600,
+                 width: int = 600,
+                 source: str = '',
+                 notes: str = '',
+                 token=None):
         self.dw = datawrapper.Datawrapper(access_token=token)
         self.height, self.width = height, width
+        self.source, self.notes = source, notes
         self._chart = None
 
     @property
@@ -27,6 +28,11 @@ class DWSquared():
                 'chart-width': self.width
             }
         }
+
+    @property
+    def today(self):
+        now = dt.utcnow()
+        return dt(now.year, now.month, now.day)
 
     @property
     def today_line(self):
@@ -46,156 +52,43 @@ class DWSquared():
             ],
         }
 
-    @property
-    def today(self):
-        now = dt.utcnow()
-        return dt(now.year, now.month, now.day)
-
     def get_charts(self, search='', *args, **kwargs):
         return self.dw.get_charts(search=search, *args, **kwargs)
 
-
-class Seasonal(DWSquared):
-
-    def __init__(self,
-                 series: pd.Series = None,
-                 title: str = '',
-                 source: str = '',
-                 prefix_unit: str = '',
-                 notes: str = '',
-                 freq_graph: str = 'D',
-                 aggregation_freq_graph: str = 'mean',
-                 cutoff_year: int = None,
-                 height: int = None,
-                 width: int = None,
-                 token: str = None,
-                 ):
-        super().__init__(height, width, token)
-        self.series = series
-        self.title = title
-        self.source = source
-        self.notes = notes
-        self.prefix_unit = prefix_unit
-        self.freq_graph = freq_graph
-        self.aggregation_freq_graph = aggregation_freq_graph
-        self.cutoff_year = cutoff_year
-        if self.cutoff_year is None:
-            self.cutoff_year = self.today.year
-        self.reshape_data(series)
-
-    def reshape_data(self, series):
-        self._data_stats = None
-        if series is not None:
-            _data = generate_seasonal_frame(
-                series, self.freq_graph, self.aggregation_freq_graph)
-            self._data_stats, self.columns_definition = compute_seasonal_stats(
-                _data, cutoff_year=self.cutoff_year)
-            self._data_stats = self._data_stats.reset_index()
-        return self._data_stats
-
     @property
     def chart(self):
-        if self._chart is None:
-            self._chart = self.dw.create_chart(
-                self.title, chart_type='d3-lines', data=self._data_stats)
-        return self._chart
+        raise NotImplementedError()
 
-    def description(self):
-        self.dw.update_description(
-            self.chart['id'],
-            source_name=self.source
-        )
-
-    def update_data(self, series):
-        id = self.dw.get_charts(search=self.title)[0]['id']
-        data = self.reshape_data(series)
-        self.dw.add_data(id, data=data)
+    def decription(self):
+        raise NotImplementedError()
 
     def metadata(self):
-        name = self._data_stats.columns[1]
-        self.columns_definition['min']['name']
-        properties = {
-            'data': {
-                'annotate': {
-                    'notes': self.notes,
-                },
-                'describe': {
-                    'source-name': self.source,
-                },
-                'column-format': {
-                    str(name): {
-                        'type': 'auto',
-                        'number-append': f' {self.prefix_unit}',
-                    }
-                }
-            },
-            'visualize': {
-                'x-grid': 'off',
-                'y-grid': 'on',
-                'scale-y': 'linear',
-                'sharing': {
-                    'auto': True,
-                    'enabled': False
-                },
-                'labeling': 'right',
-                'base-color': 7,
-                'label-colors': True,
-                'label-margin': 120,
-                'line-dashes': {
-                    self.columns_definition['mean']['name']: 3
-                },
-                'line-widths': {
-                    self.columns_definition['min']['name']: 3,
-                    self.columns_definition['max']['name']: 3,
-                    self.columns_definition['mean']['name']: 3
-                },
-                'custom-colors': {
-                    self.columns_definition['mean']['name']: '#15607a',
-                    self.columns_definition['max']['name']: '#ffffff',
-                    self.columns_definition['min']['name']: '#ffffff',
-                },
-                'interpolation': 'linear',
-                'show-tooltips': True,
-                'x-tick-format': 'MMMM',
-                'y-grid-format': 'auto',
-                'y-grid-labels': 'outside',
-                'chart-type-set': True,
-                'custom-range-x': [
-                    '',
-                    ''
-                ],
-                'custom-range-y': [
-                    '',
-                    ''
-                ],
-                'custom-ticks-x': '',
-                'custom-ticks-y': '',
-                'connector-lines': True,
-                'tooltip-number-format': '0,0.[00]',
-                'tooltip-use-custom-formats': True,
-                'tooltip-x-format': 'll',
-                'y-grid-subdivide': True,
-                'line-value-labels': True,
-                'custom-area-fills': [
-                    {
-                        'to': self.columns_definition['max']['name'],
-                        'from': self.columns_definition['min']['name'],
-                        'color': '#cccccc',
-                        'opacity': 0.3,
-                        'interpolation': 'linear'
-                    }
-                ],
+        raise NotImplementedError()
+
+    def decription(self):
+        return self.dw.update_description(
+            self.chart['id'],
+            source_name=self.source,
+        )
+
+    def _update_data(self, data, transformation, *args, **kwargs) -> pd.DataFrame:
+        id = self.dw.get_charts(search=self.title)[0]['id']
+        data = transformation(data, *args, **kwargs)
+        self.dw.add_data(id, data=data)
+
+    @property
+    def initial_properties(self):
+        return {
+            'annotate': {
+                'notes': self.notes,
             }
         }
-        properties.update(self.default_publish)
-        properties['visualize'].update(self.today_line)
-        self.dw.update_metadata(self.chart['id'], properties)
 
     def publish(self):
-        self.description()
+        self.decription()
         self.metadata()
         search = self.dw.get_charts(search=self.title)
         for s in search:
             self.dw.delete_chart(s['id'])
         self.dw.publish_chart(self.chart['id'])
-        print(self.chart['id'])
+        print(f'chart_id: {self.chart["id"]}, chart_title: {self.title}')
