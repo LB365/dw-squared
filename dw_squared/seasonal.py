@@ -23,7 +23,7 @@ class Seasonal(DWSquared):
                  width: int = None,
                  token: str = None,
                  ):
-        super().__init__(height, width, source, notes, token)
+        super().__init__(title, token, height, width, source, notes)
         self.series = series
         self.title = title
         self.source = source

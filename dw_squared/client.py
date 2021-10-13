@@ -1,4 +1,4 @@
-from dw_squared.plot import DWSquared
+from dw_squared.plot import DWSquared, _DWSquared
 from dw_squared.area import Area
 from dw_squared.bar import StackedBar
 from dw_squared.line import Lines
@@ -10,4 +10,6 @@ PLOT_TYPE = {
     'stacked': StackedBar,
     'line': Lines,
     'seasonal': Seasonal,
+    'undefined': _DWSquared
 }
+

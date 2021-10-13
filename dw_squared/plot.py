@@ -3,18 +3,29 @@ from datetime import datetime as dt
 import pandas as pd
 import datawrapper
 
+class _DWSquared():
+    def __init__(self, title, token) -> None:
+        self.title = title
+        self.dw = datawrapper.Datawrapper(access_token=token)
+    
+    def _update_data(self, data, transformation, *args, **kwargs) -> pd.DataFrame:
+        id = self.dw.get_charts(search=self.title)[0]['id']
+        data = transformation(data, *args, **kwargs)
+        self.dw.add_data(id, data=data)
 
-class DWSquared():
+class DWSquared(_DWSquared):
     def __init__(self,
+                 title: str,
+                 token: str,
                  height: int = 600,
                  width: int = 600,
                  source: str = '',
-                 notes: str = '',
-                 token=None):
-        self.dw = datawrapper.Datawrapper(access_token=token)
+                 notes: str = ''):
+        super().__init__(title, token)
         self.height, self.width = height, width
         self.source, self.notes = source, notes
         self._chart = None
+    
 
     @property
     def default_publish(self):

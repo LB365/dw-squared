@@ -15,7 +15,7 @@ class Lines(DWSquared):
                  width: int = None,
                  token: str = None,
                  ):
-        super().__init__(height, width, source, notes, token)
+        super().__init__(title, token, height, width, source, notes)
         self.frame = frame
         self.title = title
         self.source = source
