@@ -6,7 +6,7 @@ REQUIREMENTS = [
 ]
 
 setup(
-    name='open_saturn',
+    name='dw-squared',
     version='1.0',
     packages=['dw_squared'],
     package_dir={
