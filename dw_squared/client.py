@@ -1,4 +1,5 @@
 from datetime import datetime as dt
+from numpy.core.fromnumeric import reshape
 
 import pandas as pd
 import datawrapper
@@ -32,17 +33,17 @@ class DWSquared():
         today_str = self.today.strftime('%d/%m/%Y %H:%M')
         return {
             'range-annotations': [
-                    {
-                        'x0': today_str,
-                        'x1': today_str,
-                        'type': 'x',
-                        'color': '#00344c',
-                        'display': 'line',
-                        'opacity': 28,
-                        'strokeType': 'solid',
-                        'strokeWidth': 1
-                    }
-                ],
+                {
+                    'x0': today_str,
+                    'x1': today_str,
+                    'type': 'x',
+                    'color': '#00344c',
+                    'display': 'line',
+                    'opacity': 28,
+                    'strokeType': 'solid',
+                    'strokeWidth': 1
+                }
+            ],
         }
 
     @property
@@ -57,7 +58,7 @@ class DWSquared():
 class Seasonal(DWSquared):
 
     def __init__(self,
-                 series: pd.Series,
+                 series: pd.Series = None,
                  title: str = '',
                  source: str = '',
                  prefix_unit: str = '',
@@ -80,11 +81,17 @@ class Seasonal(DWSquared):
         self.cutoff_year = cutoff_year
         if self.cutoff_year is None:
             self.cutoff_year = self.today.year
-        _data = generate_seasonal_frame(
-            self.series, self.freq_graph, self.aggregation_freq_graph)
-        self._data_stats, self.columns_definition = compute_seasonal_stats(
-            _data, cutoff_year=self.cutoff_year)
-        self._data_stats = self._data_stats.reset_index()
+        self.reshape_data(series)
+
+    def reshape_data(self, series):
+        self._data_stats = None
+        if series is not None:
+            _data = generate_seasonal_frame(
+                series, self.freq_graph, self.aggregation_freq_graph)
+            self._data_stats, self.columns_definition = compute_seasonal_stats(
+                _data, cutoff_year=self.cutoff_year)
+            self._data_stats = self._data_stats.reset_index()
+        return self._data_stats
 
     @property
     def chart(self):
@@ -98,6 +105,11 @@ class Seasonal(DWSquared):
             self.chart['id'],
             source_name=self.source
         )
+
+    def update_data(self, series):
+        id = self.dw.get_charts(search=self.title)[0]['id']
+        data = self.reshape_data(series)
+        self.dw.add_data(id, data=data)
 
     def metadata(self):
         name = self._data_stats.columns[1]
