@@ -1,0 +1,47 @@
+- 
+  chart_type : "seasonal"
+  title: "title" 
+  source: "source"
+  notes: "notes"
+  height: 400
+  width: 600
+  unit: "unit"
+  freq_graph: 'W'
+  aggregation_freq_graph: 'last'
+  cutoff_year: 1994
+  series: 
+    - 
+      series_id: "series_id"
+      legend: "legend"
+      start: "start"
+      end: "end"
+- 
+  chart_type : "line"
+  title: "title" 
+  source: "source"
+  notes: "notes"
+  height: 400
+  width: 600
+  unit: "unit"
+  display_today: True
+  series: 
+    - 
+      series_id: "series_id"
+      legend: "legend"
+      start: "start"
+      end: "end"
+- 
+  chart_type : "line"
+  title: "title" 
+  source: "source"
+  notes: "notes"
+  height: 400
+  width: 600
+  unit: "unit"
+  display_today: True
+  series: 
+    - 
+      series_id: "series_id"
+      legend: "legend"
+      start: "start"
+      end: "end"

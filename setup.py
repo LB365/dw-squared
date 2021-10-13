@@ -3,6 +3,7 @@ from setuptools import setup
 REQUIREMENTS = [
 	'datawrapper',
 	'pandas',
+    'psyl',
 ]
 
 setup(
