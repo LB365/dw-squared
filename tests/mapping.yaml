@@ -30,18 +30,3 @@
       legend: "legend"
       start: "start"
       end: "end"
-- 
-  chart_type : "line"
-  title: "title" 
-  source: "source"
-  notes: "notes"
-  height: 400
-  width: 600
-  unit: "unit"
-  display_today: True
-  series: 
-    - 
-      series_id: "series_id"
-      legend: "legend"
-      start: "start"
-      end: "end"
