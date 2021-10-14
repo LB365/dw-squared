@@ -5,7 +5,7 @@ from dw_squared.client import DWSquared
 
 class StackedBar(DWSquared):
     def __init__(self,
-                 frame: pd.DataFrame = None,
+                 data: pd.DataFrame = None,
                  title: str = '',
                  source: str = '',
                  prefix_unit: str = '',
@@ -14,9 +14,11 @@ class StackedBar(DWSquared):
                  height: int = None,
                  width: int = None,
                  token: str = None,
+                 *args,
+                 **kwargs,
                  ):
         super().__init__(title, token, height, width, source, notes)
-        self.frame = frame
+        self.frame = data
         self.title = title
         self.source = source
         self.notes = notes
@@ -63,6 +65,7 @@ class StackedBar(DWSquared):
                     'position': 'color-key'
                 },
                 'enabled': True,
+                'y-grid-labels': 'inside',
                 'position': 'color-key',
                 'chart-type-set': True,
                 'color-key': True

@@ -5,7 +5,7 @@ from dw_squared.client import DWSquared
 
 class Area(DWSquared):
     def __init__(self,
-                 frame: pd.DataFrame = None,
+                 data: pd.DataFrame = None,
                  title: str = '',
                  source: str = '',
                  prefix_unit: str = '',
@@ -14,9 +14,11 @@ class Area(DWSquared):
                  height: int = None,
                  width: int = None,
                  token: str = None,
+                 *args,
+                 **kwargs,
                  ):
         super().__init__(title, token, height, width, source, notes)
-        self.frame = frame
+        self.frame = data
         self.title = title
         self.source = source
         self.notes = notes
@@ -66,7 +68,7 @@ class Area(DWSquared):
                 'interpolation': 'linear',
                 'show-tooltips': True,
                 'y-grid-format': 'auto',
-                'y-grid-labels': 'outside',
+                'y-grid-labels': 'inside',
             }
         }
         extra_properties.update(self.default_publish)

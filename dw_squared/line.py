@@ -5,7 +5,7 @@ from dw_squared.client import DWSquared
 
 class Lines(DWSquared):
     def __init__(self,
-                 frame: pd.DataFrame = None,
+                 data: pd.DataFrame = None,
                  title: str = '',
                  source: str = '',
                  prefix_unit: str = '',
@@ -14,9 +14,11 @@ class Lines(DWSquared):
                  height: int = None,
                  width: int = None,
                  token: str = None,
+                 *args,
+                 **kwargs,
                  ):
         super().__init__(title, token, height, width, source, notes)
-        self.frame = frame
+        self.frame = data
         self.title = title
         self.source = source
         self.notes = notes
@@ -52,12 +54,12 @@ class Lines(DWSquared):
                 'x-grid': 'ticks',
                 'y-grid': 'on',
                 'scale-y': 'linear',
-                'labeling': 'top',
+                'labeling': 'top' if self._data.shape[1] > 1 else 'none',
                 'base-color': 7,
                 'label-colors': True,
                 'interpolation': 'linear',
                 'show-tooltips': True,
-                'y-grid-labels': 'outside',
+                'y-grid-labels': 'inside',
                 "line-symbols": True,
                 "line-symbols-on": "last",
                 "line-value-labels": True

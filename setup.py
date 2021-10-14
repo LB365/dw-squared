@@ -4,6 +4,8 @@ REQUIREMENTS = [
 	'datawrapper',
 	'pandas',
     'psyl',
+    'tshistory',
+    'tqdm',
 ]
 
 setup(

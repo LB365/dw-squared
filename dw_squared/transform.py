@@ -8,13 +8,14 @@ def name_stats(name, date_range):
 
 
 def generate_seasonal_frame(
-        series: pd.Series,
+        series: pd.DataFrame,
+        interpolation=None,
         freq: str = 'W',
-        agg: str = 'mean') -> pd.DataFrame:
+        agg: str = 'mean'
+) -> pd.DataFrame:
 
     now = dt.utcnow()
     df = (series
-          .to_frame()
           .reset_index()
           .assign(year=lambda x: x['index'].dt.year,
                   index=lambda x: x['index'].dt.strftime(f'%d-%m-{now.year}'))
@@ -23,7 +24,9 @@ def generate_seasonal_frame(
           )
     df.index = pd.to_datetime(df.index, format="%d-%m-%Y", errors='coerce')
     df = df.sort_index().resample(freq).agg(agg)
-    return df[series.name]
+    if interpolation is not None:
+        df = df.interpolate(method=interpolation)
+    return df[series.columns[0]]
 
 
 def compute_seasonal_stats(

@@ -1,32 +1,41 @@
 - 
   chart_type : "seasonal"
-  title: "title" 
+  title: "seasonal_plot" 
   source: "source"
   notes: "notes"
   height: 400
   width: 600
-  unit: "unit"
+  prefix_unit: "unit"
   freq_graph: 'W'
   aggregation_freq_graph: 'last'
+  interpolation: 'bfill'
   cutoff_year: 1994
   series: 
     - 
       series_id: "series_id"
       legend: "legend"
-      start: "start"
-      end: "end"
+      start: (date "2021-1-1")
+      end: (yearend (today))
+      revision: (date "2021-1-1")
 - 
   chart_type : "line"
-  title: "title" 
+  title: "line_plot" 
   source: "source"
   notes: "notes"
   height: 400
   width: 600
-  unit: "unit"
-  display_today: True
-  series: 
+  prefix_unit: "unit"
+  display_today: true
+  series:
     - 
       series_id: "series_id"
       legend: "legend"
-      start: "start"
-      end: "end"
+      start: (date "2021-5-1")
+      end: (date "2024-1-1")
+      revision: null
+    - 
+      series_id: "series_id_2"
+      legend: "legend"
+      start: (date "2021-1-1")
+      end: null
+      revision: null

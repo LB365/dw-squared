@@ -11,36 +11,43 @@ from dw_squared.transform import (
 class Seasonal(DWSquared):
 
     def __init__(self,
-                 series: pd.Series = None,
+                 data: pd.DataFrame = None,
                  title: str = '',
                  source: str = '',
                  prefix_unit: str = '',
                  notes: str = '',
                  freq_graph: str = 'D',
                  aggregation_freq_graph: str = 'mean',
+                 interpolation: str = None,
                  cutoff_year: int = None,
                  height: int = None,
                  width: int = None,
                  token: str = None,
+                 *args,
+                 **kwargs,
                  ):
         super().__init__(title, token, height, width, source, notes)
-        self.series = series
+        assert data.shape[1] == 1, "Data must be univariate for seasonal plots"
+        self.series = data
         self.title = title
         self.source = source
         self.notes = notes
+        self.interpolation = interpolation
         self.prefix_unit = prefix_unit
         self.freq_graph = freq_graph
         self.aggregation_freq_graph = aggregation_freq_graph
         self.cutoff_year = cutoff_year
         if self.cutoff_year is None:
             self.cutoff_year = self.today.year
-        self.reshape_data(series)
+        self.reshape_data(data)
 
     def reshape_data(self, series):
         self._data_stats = None
         if series is not None:
             _data = generate_seasonal_frame(
-                series, self.freq_graph, self.aggregation_freq_graph)
+                series, self.interpolation,
+                self.freq_graph, self.aggregation_freq_graph
+                )
             self._data_stats, self.columns_definition = compute_seasonal_stats(
                 _data, cutoff_year=self.cutoff_year)
             self._data_stats = self._data_stats.reset_index()
@@ -92,7 +99,7 @@ class Seasonal(DWSquared):
                 'interpolation': 'linear',
                 'show-tooltips': True,
                 'x-tick-format': 'MMMM',
-                'y-grid-labels': 'outside',
+                'y-grid-labels': 'inside',
                 'tooltip-use-custom-formats': True,
                 'tooltip-x-format': 'll',
                 'y-grid-subdivide': True,
