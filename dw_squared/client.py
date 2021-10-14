@@ -48,6 +48,10 @@ class PlotConfig():
         del config['series']
         return config
 
+    def order_series(self, title:str):
+        conf = list(filter(lambda x: title == x['title'], self.config))[0]
+        return [s['legend'] for s in conf['series']]
+
     def series_queries(self, titles: List[str] = list()):
         mask = self.df_config.title.isin(titles)
         t, s = self.df_config[mask]['title'], self.df_config[mask]['series']
@@ -101,8 +105,9 @@ def create_single_plot(data: pd.DataFrame,
                        config: PlotConfig,
                        title: dict,
                        token: str):
+    cols = config.order_series(title)
     kwargs = {**config.single_config(title),
-              'data': data,
+              'data': data[cols],
               'token': token}
     plot = PLOT_TYPE[kwargs['chart_type']](**kwargs)
     plot.publish()
@@ -112,8 +117,9 @@ def update_single_plot(data: pd.DataFrame,
                        config: PlotConfig,
                        title: dict,
                        token: str):
+    cols = config.order_series(title)
     kwargs = {**config.single_config(title),
-              'data': data,
+              'data': data[cols],
               'token': token}
     plot = PLOT_TYPE[kwargs['chart_type']](**kwargs)
     plot.update_data(data)

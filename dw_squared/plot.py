@@ -1,7 +1,9 @@
+from itertools import cycle
 from datetime import datetime as dt
 
 import pandas as pd
 import datawrapper
+
 
 class _DWSquared():
     def __init__(self, title, token) -> None:
@@ -86,6 +88,7 @@ class DWSquared(_DWSquared):
         id = self.dw.get_charts(search=self.title)[0]['id']
         data = transformation(data, *args, **kwargs)
         self.dw.add_data(id, data=data)
+        self.dw.publish_chart(id)
 
     @property
     def initial_properties(self):

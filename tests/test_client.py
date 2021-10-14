@@ -25,8 +25,8 @@ def test_plot_config():
 
 
 def test_plot(token, endpoint, mapping):
-    title = "US gasoline stocks"
     plotconfig = PlotConfig(mapping)
+    title = plotconfig.config[0]['title']
     tsa = timeseries(endpoint)
     program = plotconfig.series_bounds([title])
     data = get_data(tsa, program)

@@ -2,6 +2,7 @@ import pandas as pd
 
 from dw_squared.client import DWSquared
 
+from dw_squared import PALETTE
 from dw_squared.transform import (
     generate_seasonal_frame,
     compute_seasonal_stats

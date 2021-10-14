@@ -1,5 +1,7 @@
 import pandas as pd
+import numpy as np
 
+from dw_squared import PALETTE
 from dw_squared.client import DWSquared
 
 
@@ -41,6 +43,7 @@ class Lines(DWSquared):
         self._update_data(frame, self.reshape_data)
 
     def metadata(self):
+        palette = {legend: next(PALETTE) for legend in self._data.columns[1:]}
         extra_properties = {
             'data': {
                 'column-format': {
@@ -53,8 +56,9 @@ class Lines(DWSquared):
             'visualize': {
                 'x-grid': 'ticks',
                 'y-grid': 'on',
+                'custom-colors': palette,
                 'scale-y': 'linear',
-                'labeling': 'top' if self._data.shape[1] > 1 else 'none',
+                'labeling': 'top' if self._data.shape[1] > 2 else 'off',
                 'base-color': 7,
                 'label-colors': True,
                 'interpolation': 'linear',

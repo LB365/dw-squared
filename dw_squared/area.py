@@ -1,5 +1,6 @@
 import pandas as pd
 
+from dw_squared import PALETTE
 from dw_squared.client import DWSquared
 
 
@@ -41,6 +42,7 @@ class Area(DWSquared):
         self._update_data(frame, self.reshape_data)
 
     def metadata(self):
+        palette = {legend: next(PALETTE) for legend in self._data.columns[1:]}
         extra_properties = {
             'data': {
                 'column-format': {
@@ -58,9 +60,11 @@ class Area(DWSquared):
                     'auto': True,
                     'enabled': False
                 },
+        'custom-colors': palette,
 		'area-opacity': 1,
 		'area-separator-color': 0,
 		'sort-areas': 'keep',
+        'labeling': 'top' if self._data.shape[1] > 2 else 'off',
 		'stack-areas': 'true',
                 'labeling': 'top',
                 'base-color': 7,

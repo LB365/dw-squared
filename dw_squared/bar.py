@@ -1,5 +1,6 @@
 import pandas as pd
 
+from dw_squared import PALETTE
 from dw_squared.client import DWSquared
 
 
@@ -41,6 +42,7 @@ class StackedBar(DWSquared):
         self._update_data(frame, self.reshape_data)
 
     def metadata(self):
+        palette = {legend: next(PALETTE) for legend in self._data.columns[1:]}
         extra_properties = {
             'data': {
                 'transpose': True,
@@ -54,7 +56,9 @@ class StackedBar(DWSquared):
             'visualize': {
                 'x-grid': 'ticks',
                 'y-grid': 'on',
-      		        'category': 'direct',
+                'custom-colors': palette,
+                'labeling': 'top' if self._data.shape[1] > 2 else 'off',
+      		    'category': 'direct',
                 'valueLabels': {
                     'show': 'always',
                     'enabled': True
