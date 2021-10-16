@@ -102,7 +102,7 @@ class Seasonal(DWSquared):
                 'x-tick-format': 'MMMM',
                 'y-grid-labels': 'inside',
                 'tooltip-use-custom-formats': True,
-                'tooltip-x-format': 'll',
+                'tooltip-x-format': 'Do MMMM',
                 'y-grid-subdivide': True,
                 'line-value-labels': True,
                 'custom-area-fills': [

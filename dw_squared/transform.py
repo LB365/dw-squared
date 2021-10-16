@@ -15,7 +15,13 @@ def generate_seasonal_frame(
 ) -> pd.DataFrame:
 
     now = dt.utcnow()
-    df = (series
+
+    resampled = (series.resample(freq).agg(agg)) 
+
+    if interpolation is not None:
+        resampled = resampled.interpolate(method=interpolation)
+
+    df = (resampled
           .reset_index()
           .assign(year=lambda x: x['index'].dt.year,
                   index=lambda x: x['index'].dt.strftime(f'%d-%m-{now.year}'))
@@ -24,8 +30,6 @@ def generate_seasonal_frame(
           )
     df.index = pd.to_datetime(df.index, format="%d-%m-%Y", errors='coerce')
     df = df.sort_index().resample(freq).agg(agg)
-    if interpolation is not None:
-        df = df.interpolate(method=interpolation)
     return df[series.columns[0]]
 
 
