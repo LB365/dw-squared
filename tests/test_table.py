@@ -56,8 +56,10 @@ def test_freq_agg(token):
         start=dt(2021, 1, 1), end=dt(2022, 9, 30), freq='M')
     data = pd.DataFrame(
         data=np.cumsum(np.clip(np.random.randn(
-            len(range_date), 3), a_min=0, a_max=None), axis=0),
-        index=range_date, columns=['level_l1_0', 'level_l1_1', 'level_l1_l2_0'])
+            len(range_date), 4), a_min=0, a_max=None), axis=0),
+        index=range_date, 
+        columns=['level_l1_0', 'level_l1_1', 
+        'level_l1_l2_0', 'level_l1_l2_l3_0'])
 
     table_config = {'L1': [
         {'legend': 'level_l1_0',
@@ -66,7 +68,12 @@ def test_freq_agg(token):
          'L2': [
              {'legend': 'level_l1_l2_0',
               'aggregation_freq': 'mean',
-              'aggregation_level': 'sum'}
+              'aggregation_level': 'sum',
+              'L3': [
+                  {'legend': 'level_l1_l2_l3_0',
+                   'aggregation_freq': 'mean',
+                   'aggregation_level': 'sum'}
+              ]}
          ]},
         {'legend': 'level_l1_1',
          'aggregation_freq': 'mean',
