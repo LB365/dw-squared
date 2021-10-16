@@ -53,10 +53,10 @@ def test_within_key(table_config):
 
 def test_freq_agg(token):
     range_date = pd.date_range(
-        start=dt(2021, 1, 1), end=dt(2022, 9, 30), freq='M')
+        start=dt(2021, 1, 1), end=dt(2024, 9, 30), freq='M')
     data = pd.DataFrame(
-        data=np.cumsum(np.clip(np.random.randn(
-            len(range_date), 4), a_min=0, a_max=None), axis=0),
+        data=np.cumsum(np.random.randn(
+            len(range_date), 4), axis=0),
         index=range_date, 
         columns=['level_l1_0', 'level_l1_1', 
         'level_l1_l2_0', 'level_l1_l2_l3_0'])
