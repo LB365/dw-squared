@@ -16,7 +16,7 @@ def generate_seasonal_frame(
 
     now = dt.utcnow()
 
-    resampled = (series.resample(freq).agg(agg)) 
+    resampled = (series.resample(freq).agg(agg))
 
     if interpolation is not None:
         resampled = resampled.interpolate(method=interpolation)
@@ -31,6 +31,57 @@ def generate_seasonal_frame(
     df.index = pd.to_datetime(df.index, format="%d-%m-%Y", errors='coerce')
     df = df.sort_index().resample(freq).agg(agg)
     return df[series.columns[0]]
+
+
+def compute_seasonal_stats_unfolded(series, interpolation, freq,
+                                    agg, cutoff_year: int = dt.utcnow().year):
+
+    resampled = (series.resample(freq).agg(agg))
+    if interpolation is not None:
+        resampled = resampled.interpolate(method=interpolation)
+
+    selected_formated = [resampled.index[0], dt(cutoff_year, 1, 1)]
+    stats = {
+        'min': {
+            'name': name_stats('Min', selected_formated),
+            'func': 'min',
+        },
+        'max': {
+            'name': name_stats('Max', selected_formated),
+            'func': 'max',
+        },
+        'mean': {
+            'name': name_stats('Mean', selected_formated),
+            'func': 'mean',
+        }
+    }
+    _stats = {k: v['name'] for k, v in stats.items()}
+
+    seasonal = resampled.loc[:dt(cutoff_year, 1, 1)]
+    unfold_grouping = {
+        'D': seasonal.index.dayofyear,
+        'B': seasonal.index.dayofyear,
+        'W': seasonal.index.weekofyear,
+        'M': seasonal.index.monthofyear
+    }
+    f_unfold = {
+        'D': lambda x: x.index.dayofyear,
+        'B': lambda x: x.index.dayofyear,
+        'W': lambda x: x.index.weekofyear,
+        'M': lambda x: x.index.monthofyear
+
+    }
+    seasonal = (seasonal
+                .groupby(unfold_grouping[freq])
+                .agg(("min", "max", "mean"))
+                .rename(columns=_stats)
+                [series.columns[0]])
+    result = (resampled
+              .assign(key=f_unfold[freq])
+              .merge(seasonal.reset_index(), left_on='key', right_index=True)
+              .drop(["key", "index"], axis=1))
+    print(result)
+    return result, stats
 
 
 def compute_seasonal_stats(

@@ -4,6 +4,7 @@ from dw_squared.client import DWSquared
 
 from dw_squared import PALETTE
 from dw_squared.transform import (
+    compute_seasonal_stats_unfolded,
     generate_seasonal_frame,
     compute_seasonal_stats
 )
@@ -21,6 +22,7 @@ class Seasonal(DWSquared):
                  aggregation_freq_graph: str = 'mean',
                  interpolation: str = None,
                  cutoff_year: int = None,
+                 folded: bool = True,
                  height: int = None,
                  width: int = None,
                  token: str = None,
@@ -40,7 +42,17 @@ class Seasonal(DWSquared):
         self.cutoff_year = cutoff_year
         if self.cutoff_year is None:
             self.cutoff_year = self.today.year
-        self.reshape_data(data)
+        self.reshaped_data_folded(data) if folded else self.reshape_data(data)
+
+    def reshaped_data_folded(self, series):
+        self._data_stats = None
+        if series is not None:
+            self._data_stats, self.columns_definition = compute_seasonal_stats_unfolded(
+                series, self.interpolation,
+                self.freq_graph, self.aggregation_freq_graph, self.cutoff_year
+            )
+            self._data_stats = self._data_stats.reset_index()
+        return self._data_stats
 
     def reshape_data(self, series):
         self._data_stats = None
@@ -48,7 +60,7 @@ class Seasonal(DWSquared):
             _data = generate_seasonal_frame(
                 series, self.interpolation,
                 self.freq_graph, self.aggregation_freq_graph
-                )
+            )
             self._data_stats, self.columns_definition = compute_seasonal_stats(
                 _data, cutoff_year=self.cutoff_year)
             self._data_stats = self._data_stats.reset_index()

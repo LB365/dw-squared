@@ -1,7 +1,8 @@
 import pytest
 from tshistory.api import timeseries
 
-from dw_squared.client import PlotConfig, create_single_plot, get_data, saturn_to_frame, update_single_plot
+from dw_squared.client import (PlotConfig, create_single_plot, 
+create_single_table, get_data, saturn_to_frame, update_single_plot)
 
 
 @pytest.fixture
@@ -33,3 +34,13 @@ def test_plot(token, endpoint, mapping):
     data = saturn_to_frame(data, plotconfig, title)
     #update_single_plot(data, plotconfig, title, token)
     create_single_plot(data, plotconfig, title, token)
+
+# def test_plot(token, endpoint, mapping):
+#     plotconfig = PlotConfig(mapping)
+#     title = plotconfig.config[0]['title']
+#     tsa = timeseries(endpoint)
+#     program = plotconfig.series_bounds([title])
+#     data = get_data(tsa, program)
+#     data = saturn_to_frame(data, plotconfig, title)
+#     #update_single_plot(data, plotconfig, title, token)
+#     create_single_table(data, plotconfig, title, token)
