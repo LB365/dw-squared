@@ -33,7 +33,8 @@ class Seasonal(DWSquared):
                  *args,
                  **kwargs,
                  ):
-        super().__init__(title, token, height, width, graph_start, graph_end, source, notes)
+        super().__init__(title, token, height, width, 
+        graph_start, graph_end, source, notes)
         assert data.shape[1] == 1, "Data must be univariate for seasonal plots"
         self.series = data
         self.title = title

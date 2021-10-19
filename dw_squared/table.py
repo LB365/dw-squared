@@ -1,9 +1,7 @@
-from functools import reduce
-from itertools import accumulate
 from typing import Dict
 import pandas as pd
+from pandas import Timestamp
 
-from dw_squared import PALETTE
 from dw_squared.client import DWSquared
 
 PRETTY_DATES = {
@@ -24,7 +22,7 @@ SPARKLINE_DATES = {
 
 BACKGROUND = {
     'L1': "#ffffff",
-    'L2': "#82f5cf",
+    'L2': "#ffffff", #"#82f5cf",
     'L3': "#ffffff",
 }
 FONT_SIZE = {
@@ -102,6 +100,8 @@ class Table(DWSquared):
                  title: str = '',
                  source: str = '',
                  prefix_unit: str = '',
+                 graph_start: Timestamp=None,
+                 graph_end: Timestamp=None,
                  notes: str = '',
                  height: int = None,
                  width: int = None,
@@ -109,7 +109,8 @@ class Table(DWSquared):
                  *args,
                  **kwargs,
                  ):
-        super().__init__(title, token, height, width, source, notes)
+        super().__init__(title, token, height, width, 
+        graph_start, graph_end, source, notes)
         self.frame = data
         self.title = title
         self.source = source
@@ -175,7 +176,9 @@ class Table(DWSquared):
         pretty = self.to_pretty_table(indented_frame)
         sparky = self.to_sparkline(indented_frame)
         _, self.n_sparky = sparky.shape
-        return pd.concat((sparky, pretty), axis=1).reset_index()
+        df = pd.concat((sparky, pretty), axis=1)
+        df.index = df.index.rename(self.prefix_unit)
+        return df.reset_index()
 
     def today_position(self):
         return (self._resampled_frame.shape[0] +
@@ -203,6 +206,8 @@ class Table(DWSquared):
                  'italic': False,
                  'underline': False}
             )
+        row_properties[name]['borderBottom'] = "3px"
+        row_properties[name]['borderBottomColor'] = "#333333"
         return row_properties
 
     @property
@@ -211,12 +216,13 @@ class Table(DWSquared):
         col_properties = dict()
         for i, row in enumerate(self._data.columns):
             col_properties[row] = {
+                'sortable': False,
                 'showOnDesktop': True,
                 'showOnMobile': True,
                 'sparkline': {},
                 'format': '0.0',
-                'fixedWidth': True,
-                'minWidth': 40,
+                'fixedWidth': False,
+                'minWidth': 15,
             }
             if i in (now + 1, now + 2):
                 col_properties[row].update({'borderLeft': "1px",
