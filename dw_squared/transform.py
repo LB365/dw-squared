@@ -34,7 +34,8 @@ def generate_seasonal_frame(
 
 
 def compute_seasonal_stats_unfolded(series, interpolation, freq,
-                                    agg, cutoff_year: int = dt.utcnow().year):
+                                    agg, 
+                                    cutoff_year: int = dt.utcnow().year) -> Tuple[pd.DataFrame, Dict]:
 
     resampled = (series.resample(freq).agg(agg))
     if interpolation is not None:
@@ -61,14 +62,14 @@ def compute_seasonal_stats_unfolded(series, interpolation, freq,
     unfold_grouping = {
         'D': seasonal.index.dayofyear,
         'B': seasonal.index.dayofyear,
-        'W': seasonal.index.weekofyear,
-        'M': seasonal.index.monthofyear
+        'W': seasonal.index.isocalendar()["week"],
+        'M': seasonal.index.month
     }
     f_unfold = {
         'D': lambda x: x.index.dayofyear,
         'B': lambda x: x.index.dayofyear,
-        'W': lambda x: x.index.weekofyear,
-        'M': lambda x: x.index.monthofyear
+        'W': lambda x: x.index.isocalendar()["week"],
+        'M': lambda x: x.index.month
 
     }
     seasonal = (seasonal
@@ -76,11 +77,11 @@ def compute_seasonal_stats_unfolded(series, interpolation, freq,
                 .agg(("min", "max", "mean"))
                 .rename(columns=_stats)
                 [series.columns[0]])
+
     result = (resampled
               .assign(key=f_unfold[freq])
-              .merge(seasonal.reset_index(), left_on='key', right_index=True)
-              .drop(["key", "index"], axis=1))
-    print(result)
+              .merge(seasonal, left_on='key', right_index=True)
+              .drop("key", axis=1))
     return result, stats
 
 

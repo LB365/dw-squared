@@ -50,11 +50,15 @@ class PlotConfig():
     def __init__(self, path) -> None:
         self.path = path
         with open(self.path, 'r') as stream:
-            self.config = yaml.load(stream)
+            self.config = yaml.load(stream, Loader=yaml.FullLoader)
         self.df_config = pd.json_normalize(self.config)
 
     def single_config(self, title):
         config = list(filter(lambda x: x['title'] == title, self.config))[0]
+        if 'graph_end' in config.keys():
+            config['graph_end'] = evaluate_not_none(config['graph_end'])
+        if 'graph_start' in config.keys():
+            config['graph_start'] = evaluate_not_none(config['graph_start'])
         del config['series']
         return config
 

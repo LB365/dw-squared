@@ -1,5 +1,5 @@
 import pandas as pd
-
+from pandas import Timestamp
 from dw_squared import PALETTE
 from dw_squared.client import DWSquared
 
@@ -11,6 +11,8 @@ class Area(DWSquared):
                  source: str = '',
                  prefix_unit: str = '',
                  notes: str = '',
+                 graph_start: Timestamp = None,
+                 graph_end: Timestamp = None,
                  display_today: bool = True,
                  height: int = None,
                  width: int = None,
@@ -18,7 +20,7 @@ class Area(DWSquared):
                  *args,
                  **kwargs,
                  ):
-        super().__init__(title, token, height, width, source, notes)
+        super().__init__(title, token, height, width, graph_start, graph_end, source, notes)
         self.frame = data
         self.title = title
         self.source = source
@@ -60,11 +62,11 @@ class Area(DWSquared):
                     'auto': True,
                     'enabled': False
                 },
-        'custom-colors': palette,
+                'custom-colors': palette,
 		'area-opacity': 1,
 		'area-separator-color': 0,
 		'sort-areas': 'keep',
-        'labeling': 'top' if self._data.shape[1] > 2 else 'off',
+                'labeling': 'top' if self._data.shape[1] > 2 else 'off',
 		'stack-areas': 'true',
                 'labeling': 'top',
                 'base-color': 7,

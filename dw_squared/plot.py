@@ -1,5 +1,7 @@
 from itertools import cycle
+from pandas import Timestamp
 from datetime import datetime as dt
+from dateutil.relativedelta import relativedelta
 
 import pandas as pd
 import datawrapper
@@ -9,11 +11,12 @@ class _DWSquared():
     def __init__(self, title, token) -> None:
         self.title = title
         self.dw = datawrapper.Datawrapper(access_token=token)
-    
+
     def _update_data(self, data, transformation, *args, **kwargs) -> pd.DataFrame:
         id = self.dw.get_charts(search=self.title)[0]['id']
         data = transformation(data, *args, **kwargs)
         self.dw.add_data(id, data=data)
+
 
 class DWSquared(_DWSquared):
     def __init__(self,
@@ -21,13 +24,15 @@ class DWSquared(_DWSquared):
                  token: str,
                  height: int = 600,
                  width: int = 600,
+                 graph_start: Timestamp=None,
+                 graph_end: Timestamp=None,
                  source: str = '',
                  notes: str = ''):
         super().__init__(title, token)
         self.height, self.width = height, width
         self.source, self.notes = source, notes
+        self.graph_start, self.graph_end = graph_start, graph_end
         self._chart = None
-    
 
     @property
     def default_publish(self):
@@ -47,10 +52,15 @@ class DWSquared(_DWSquared):
         now = dt.utcnow()
         return dt(now.year, now.month, now.day)
 
+    def slice_and_reset_index(self, data:pd.DataFrame):
+        _range = [self.graph_start, self.graph_end]
+        date_range = [f"{x:%Y-%m-%d}" if x is not None else None for x in _range]
+        return data.loc[slice(*date_range)].reset_index()
+
     @property
     def today_line(self):
         today_str = self.today.strftime('%d/%m/%Y %H:%M')
-        return {
+        range_annotation = {
             'range-annotations': [
                 {
                     'x0': today_str,
@@ -64,6 +74,7 @@ class DWSquared(_DWSquared):
                 }
             ],
         }
+        return range_annotation
 
     def get_charts(self, search='', *args, **kwargs):
         return self.dw.get_charts(search=search, *args, **kwargs)

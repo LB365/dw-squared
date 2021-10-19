@@ -1,3 +1,4 @@
+from pandas import Timestamp
 import pandas as pd
 
 from dw_squared import PALETTE
@@ -12,13 +13,15 @@ class StackedBar(DWSquared):
                  prefix_unit: str = '',
                  notes: str = '',
                  display_today: bool = True,
+                 graph_start: Timestamp=None,
+                 graph_end: Timestamp=None,
                  height: int = None,
                  width: int = None,
                  token: str = None,
                  *args,
                  **kwargs,
                  ):
-        super().__init__(title, token, height, width, source, notes)
+        super().__init__(title, token, height, width, graph_start, graph_end, source, notes)
         self.frame = data
         self.title = title
         self.source = source

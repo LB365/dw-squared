@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from pandas import Timestamp
 
 from dw_squared import PALETTE
 from dw_squared.client import DWSquared
@@ -12,6 +13,8 @@ class Lines(DWSquared):
                  source: str = '',
                  prefix_unit: str = '',
                  notes: str = '',
+                 graph_start: Timestamp = None,
+                 graph_end: Timestamp = None,
                  display_today: bool = True,
                  height: int = None,
                  width: int = None,
@@ -19,7 +22,7 @@ class Lines(DWSquared):
                  *args,
                  **kwargs,
                  ):
-        super().__init__(title, token, height, width, source, notes)
+        super().__init__(title, token, height, width, graph_start, graph_end, source, notes)
         self.frame = data
         self.title = title
         self.source = source
