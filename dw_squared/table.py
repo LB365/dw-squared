@@ -21,9 +21,9 @@ SPARKLINE_DATES = {
 }
 
 BACKGROUND = {
-    'L1': "#ffffff",
-    'L2': "#ffffff", #"#82f5cf",
-    'L3': "#ffffff",
+    'L1': "#ffe59c",
+    'L2': "#ffffff00",
+    'L3': "#ffffff00",
 }
 FONT_SIZE = {
     'L1': 1,
@@ -231,7 +231,7 @@ class Table(DWSquared):
                 col_properties[row].update({'fixedWidth': True,
                                             'minWidth': 150})
                 col_properties[row]['sparkline'] = {
-                    'color': "#18a1cd",
+                    'color': "#c71e1d",
                     'dotFirst': True,
                     'height': 20,
                     'stroke': 2,
