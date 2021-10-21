@@ -70,3 +70,33 @@ Provide a mapping config file as a `.yaml` file.
       end: (yearend (today))
       revision: null
 ```
+
+#### Line with secondary axis
+
+```yaml
+- 
+  chart_type : "line"
+  title: "chart-line" 
+  source: "source"
+  notes: null
+  height: 400
+  width: 600
+  today_line: False
+  secondary: True
+  secondary_unit: 'USD per onces'
+  prefix_unit: "GBP per ton"
+  series: 
+    - 
+      series_id: "series1"
+      legend: "hello"
+      start: (deltamonths (yearstart (today)) -2)
+      end: (yearend (today))
+      revision: null
+    - 
+      series_id: "series2"
+      legend: "hello2"
+      start: (deltamonths (yearstart (today)) -2)
+      end: (yearend (today))
+      revision: null
+```
+
