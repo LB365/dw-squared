@@ -44,7 +44,7 @@ class StackedBar(DWSquared):
     def update_data(self, frame):
         self._update_data(frame, self.reshape_data)
 
-    def metadata(self):
+    def compute_metadata(self):
         palette = {legend: next(PALETTE) for legend in self._data.columns[1:]}
         extra_properties = {
             'data': {
@@ -82,4 +82,4 @@ class StackedBar(DWSquared):
         extra_properties.update(self.initial_properties)
         if self.display_today:
             extra_properties['visualize'].update(self.today_line)
-        self.dw.update_metadata(self.chart['id'], extra_properties)
+        return extra_properties

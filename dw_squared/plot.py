@@ -6,6 +6,7 @@ from dateutil.relativedelta import relativedelta
 import pandas as pd
 import datawrapper
 
+from dw_squared import nest_update
 
 class _DWSquared():
     def __init__(self, title, token) -> None:
@@ -27,12 +28,24 @@ class DWSquared(_DWSquared):
                  graph_start: Timestamp=None,
                  graph_end: Timestamp=None,
                  source: str = '',
-                 notes: str = ''):
+                 notes: str = '',
+                 reset=False):
         super().__init__(title, token)
         self.height, self.width = height, width
         self.source, self.notes = source, notes
         self.graph_start, self.graph_end = graph_start, graph_end
+        self._metadata = {} if not reset else {'visualize': {}}
         self._chart = None
+
+    @property
+    def metadata(self):
+        if not self._metadata:
+            charts = self.get_charts(self.title)
+            if charts:
+                props = self.dw.chart_properties(charts[0]['id'])
+                self._metadata = props['metadata']
+        return self._metadata
+            
 
     @property
     def default_publish(self):
@@ -83,10 +96,8 @@ class DWSquared(_DWSquared):
     def chart(self):
         raise NotImplementedError()
 
-    def decription(self):
-        raise NotImplementedError()
-
-    def metadata(self):
+    @property
+    def compute_metadata(self):
         raise NotImplementedError()
 
     def decription(self):
@@ -98,6 +109,7 @@ class DWSquared(_DWSquared):
     def _update_data(self, data, transformation, *args, **kwargs) -> pd.DataFrame:
         id = self.dw.get_charts(search=self.title)[0]['id']
         data = transformation(data, *args, **kwargs)
+        import pdb; pdb.set_trace()
         self.dw.add_data(id, data=data)
         self.dw.publish_chart(id)
 
@@ -111,7 +123,9 @@ class DWSquared(_DWSquared):
 
     def publish(self):
         self.decription()
-        self.metadata()
+        extra_properties = self.compute_metadata()
+        self._metadata = nest_update(self.metadata, extra_properties)
+        self.dw.update_metadata(self.chart['id'], self.metadata)
         search = self.dw.get_charts(search=self.title)
         for s in search:
             self.dw.delete_chart(s['id'])

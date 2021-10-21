@@ -82,7 +82,7 @@ class Seasonal(DWSquared):
     def update_data(self, frame):
         self._update_data(frame, self.reshape_data if self.unfold else self.reshaped_data_unfold)
 
-    def metadata(self):
+    def compute_metadata(self):
         name = self._data_stats.columns[1]
         self.columns_definition['min']['name']
         extra_properties = {
@@ -137,4 +137,4 @@ class Seasonal(DWSquared):
         extra_properties.update(self.default_publish)
         extra_properties.update(self.initial_properties)
         extra_properties['visualize'].update(self.today_line)
-        self.dw.update_metadata(self.chart['id'], extra_properties)
+        return extra_properties

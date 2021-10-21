@@ -110,7 +110,7 @@ class Table(DWSquared):
                  **kwargs,
                  ):
         super().__init__(title, token, height, width, 
-        graph_start, graph_end, source, notes)
+        graph_start, graph_end, source, notes, reset=True)
         self.frame = data
         self.title = title
         self.source = source
@@ -118,6 +118,9 @@ class Table(DWSquared):
         self.prefix_unit = prefix_unit
         self.freq_table = freq_table
         self.table_config = table_config
+        self.levels = within_key(self.table_config, 'legend')
+        self.cols = triple_loop_list(self.table_config, "legend")
+        self.precision = triple_loop_list(self.table_config, "precision")
         self._data = self.reshape_data(self.frame)
 
     @property
@@ -157,13 +160,11 @@ class Table(DWSquared):
             'L3': '&nbsp&nbsp&nbsp&nbsp',
         }
 
-        levels = within_key(self.table_config, 'legend')
-        cols = triple_loop_list(self.table_config, "legend")
-        self.level_cols = [key for c in cols for key,
-                           val in levels.items() if c in val]
+        self.level_cols = [key for c in self.cols for key,
+                           val in self.levels.items() if c in val]
         new_cols = {col: prefixes[lev]+col for lev,
-                    col in zip(self.level_cols, cols)}
-        return frame[cols].rename(columns=new_cols)
+                    col in zip(self.level_cols, self.cols)}
+        return frame[self.cols].rename(columns=new_cols)
 
     def _resample_data(self, frame: pd.DataFrame):
         config_agg = triple_loop_dict(
@@ -190,13 +191,15 @@ class Table(DWSquared):
     @property
     def update_row_level_style(self):
         row_properties = dict()
-        for i, row in enumerate(self.level_cols):
+        for i, (row, prec) in enumerate(zip(self.level_cols, self.precision)):
             name = f'row-{i}'
             row_properties[name] = {
                 "borderBottom": BOTTOM_BORDER[row],
                 "borderBottomColor": "#333333",
                 "borderTop": TOP_BORDER[row],
                 "borderTopColor": "#333333",
+                'format': prec,
+                'overrideFormat': True,
                 'style': {},
             }
             row_properties[name]['style'].update(
@@ -217,8 +220,6 @@ class Table(DWSquared):
         for i, row in enumerate(self._data.columns):
             col_properties[row] = {
                 'sortable': False,
-                'showOnDesktop': True,
-                'showOnMobile': True,
                 'sparkline': {},
                 'format': '0.0',
                 'fixedWidth': False,
@@ -241,7 +242,7 @@ class Table(DWSquared):
                 }
         return col_properties
 
-    def metadata(self):
+    def compute_metadata(self):
         extra_properties = {
             'visualize': {
                 "striped": True,
@@ -264,4 +265,4 @@ class Table(DWSquared):
         extra_properties["visualize"]["columns"] = self.update_cols_style
         extra_properties.update(self.default_publish)
         extra_properties.update(self.initial_properties)
-        self.dw.update_metadata(self.chart['id'], extra_properties)
+        return extra_properties
