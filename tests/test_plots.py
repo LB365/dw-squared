@@ -31,7 +31,7 @@ def test_seasonal(token):
     data = pd.Series(np.cumsum(np.random.randn(len(range_date))),
                      index=range_date, name='serie')
     seasonal_plot = Seasonal(
-        data=data,
+        data=data.to_frame(),
         title='test_seasonal',
         token=token,
         source='me',

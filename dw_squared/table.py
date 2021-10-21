@@ -68,13 +68,22 @@ def triple_loop_list(dictionary, key):
     result = list()
     if 'L1' in dictionary:
         for l1 in dictionary['L1']:
-            result.append(l1[key])
+            if key in l1:
+                result.append(l1[key])
+            else:
+                result.append(None)
             if 'L2' in l1:
                 for l2 in l1['L2']:
-                    result.append(l2[key])
+                    if key in l2:
+                        result.append(l2[key])
+                    else:
+                        result.append(None)
                     if 'L3' in l2:
                         for l3 in l2['L3']:
-                            result.append(l3[key])
+                            if key in l1:
+                                result.append(l3[key])
+                            else:
+                                result.append(None)
     return result
 
 
@@ -198,7 +207,7 @@ class Table(DWSquared):
                 "borderBottomColor": "#333333",
                 "borderTop": TOP_BORDER[row],
                 "borderTopColor": "#333333",
-                'format': prec,
+                'format': prec if prec is not None else "0.0",
                 'overrideFormat': True,
                 'style': {},
             }
