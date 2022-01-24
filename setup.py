@@ -2,6 +2,7 @@ from setuptools import setup
 
 REQUIREMENTS = [
 	'datawrapper',
+    'yaml',
 	'pandas',
     'psyl',
     'tshistory',
