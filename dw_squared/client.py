@@ -162,7 +162,7 @@ def create_single_plot(data: pd.DataFrame,
                        token: str):
     cols = config.order_series(title)
     kwargs = {**config.single_config(title),
-              'data': data[cols],
+              'data': data[cols] if data is not None else None,
               'token': token}
     plot = PLOT_TYPE[kwargs['chart_type']](**kwargs)
     plot.publish()
@@ -175,7 +175,7 @@ def create_single_table(data: pd.DataFrame,
     cols = config.order_series(title)
     _config = config.single_config(title)
     kwargs = {**_config,
-              'data': data[cols],
+              'data': data[cols] if data is not None else None,
               'table_config': _config,
               'token': token}
     plot = PLOT_TYPE[kwargs['chart_type']](**kwargs)
