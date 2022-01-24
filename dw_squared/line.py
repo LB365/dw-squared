@@ -41,6 +41,20 @@ class Lines(DWSquared):
     @property
     def chart(self):
         if self._chart is None:
+            import requests as r
+            import json
+            new_chart_response = r.post(
+                url=self.dw._CHARTS_URL, 
+                headers={
+                    "Authorization": f"Bearer {self.dw._access_token}", 
+                    "content-type":"application/json"
+                    }, 
+                data=json.dumps(
+                    {"title": self.title, "type": 'd3-lines'}
+                )
+            )
+            print(new_chart_response.text)
+            print(new_chart_response.status_code)
             self._chart = self.dw.create_chart(
                 self.title, chart_type='d3-lines', data=self._data)
         return self._chart
