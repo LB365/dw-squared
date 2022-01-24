@@ -109,7 +109,6 @@ class DWSquared(_DWSquared):
     def _update_data(self, data, transformation, *args, **kwargs) -> pd.DataFrame:
         id = self.dw.get_charts(search=self.title)[0]['id']
         data = transformation(data, *args, **kwargs)
-        import pdb; pdb.set_trace()
         self.dw.add_data(id, data=data)
         self.dw.publish_chart(id)
 
