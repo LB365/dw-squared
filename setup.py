@@ -1,7 +1,7 @@
 from setuptools import setup
 
 REQUIREMENTS = [
-	'datawrapper',
+	'datawrapper @ git+https://github.com/lofriedman/Datawrapper@master',
     'pyyaml',
 	'pandas',
     'psyl',
