@@ -38,7 +38,7 @@ class _DWSquared():
         new_chart_response = r.post(
             url=self.dw._CHARTS_URL, headers=_header, data=json.dumps(_data)
         )
-        print(f"{new_chart_response=}, {new_chart_response.status_code=}")
+        print(f"{new_chart_response.text=}, {new_chart_response.status_code=}")
         if (
             chart_type == "d3-maps-choropleth"
             or chart_type == "d3-maps-symbols"
@@ -58,7 +58,7 @@ class _DWSquared():
                 f"Chart could not be created, check your authorization credentials (access token){', and that the folder_id is valid (i.e exists, and your account has access to it)' if folder_id else ''}"
             )
         if data is not None:
-            self.add_data(chart_id=chart_info["id"], data=data)
+            self.dw.add_data(chart_id=chart_info["id"], data=data)
         return chart_info
 
 
