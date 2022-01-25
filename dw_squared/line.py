@@ -41,7 +41,7 @@ class Lines(DWSquared):
     @property
     def chart(self):
         if self._chart is None:
-            self._chart = self.create_chart(
+            self._chart = self.dw.create_chart(
                 self.title, chart_type='d3-lines', data=self._data)
         return self._chart
 
@@ -59,7 +59,7 @@ class Lines(DWSquared):
         return self._data
 
     def update_data(self, frame):
-        self._update_data(frame, self.reshape_data)
+        return self._update_data(frame, self.reshape_data)
 
     def compute_metadata(self):
         splits = []

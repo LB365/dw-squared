@@ -42,7 +42,7 @@ class StackedBar(DWSquared):
         return self._data
 
     def update_data(self, frame):
-        self._update_data(frame, self.reshape_data)
+        return self._update_data(frame, self.reshape_data)
 
     def compute_metadata(self):
         palette = {legend: next(PALETTE) for legend in self._data.columns[1:]}

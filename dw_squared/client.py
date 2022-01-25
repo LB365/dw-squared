@@ -165,7 +165,7 @@ def create_single_plot(data: pd.DataFrame,
               'data': data[cols],
               'token': token}
     plot = PLOT_TYPE[kwargs['chart_type']](**kwargs)
-    plot.publish()
+    return plot.publish()
 
 
 def create_single_table(data: pd.DataFrame,
@@ -179,7 +179,7 @@ def create_single_table(data: pd.DataFrame,
               'table_config': _config,
               'token': token}
     plot = PLOT_TYPE[kwargs['chart_type']](**kwargs)
-    plot.publish()
+    return plot.publish()
 
 
 def update_single_plot(data: pd.DataFrame,
@@ -191,4 +191,4 @@ def update_single_plot(data: pd.DataFrame,
               'data': data[cols],
               'token': token}
     plot = PLOT_TYPE[kwargs['chart_type']](**kwargs)
-    plot.update_data(data)
+    return plot.update_data(data)

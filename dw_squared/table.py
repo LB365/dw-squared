@@ -118,7 +118,7 @@ class Table(DWSquared):
                  *args,
                  **kwargs,
                  ):
-        super().__init__(title, token, height, width, 
+        super().__init__(title, token, height, width,
         graph_start, graph_end, source, notes, reset=True)
         self.frame = data
         self.title = title
@@ -195,7 +195,7 @@ class Table(DWSquared):
                 sum(self._resampled_frame.index < self.today))
 
     def update_data(self, frame):
-        self._update_data(frame, self.reshape_data)
+        return self._update_data(frame, self.reshape_data)
 
     @property
     def update_row_level_style(self):
