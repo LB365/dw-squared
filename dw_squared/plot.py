@@ -38,7 +38,7 @@ class _DWSquared():
         new_chart_response = r.post(
             url=self.dw._CHARTS_URL, headers=_header, data=json.dumps(_data)
         )
-        print(f"{new_chart_response=}, {new_chart_response.code=}")
+        print(f"{new_chart_response=}, {new_chart_response.status_code=}")
         if (
             chart_type == "d3-maps-choropleth"
             or chart_type == "d3-maps-symbols"
