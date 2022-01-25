@@ -17,6 +17,7 @@ class _DWSquared():
         id = self.dw.get_charts(search=self.title)[0]['id']
         data = transformation(data, *args, **kwargs)
         self.dw.add_data(id, data=data)
+        self.dw.publish_chart(id)
 
 
 class DWSquared(_DWSquared):
@@ -105,12 +106,6 @@ class DWSquared(_DWSquared):
             self.chart['id'],
             source_name=self.source,
         )
-
-    def _update_data(self, data, transformation, *args, **kwargs) -> pd.DataFrame:
-        id = self.dw.get_charts(search=self.title)[0]['id']
-        data = transformation(data, *args, **kwargs)
-        self.dw.add_data(id, data=data)
-        self.dw.publish_chart(id)
 
     @property
     def initial_properties(self):
