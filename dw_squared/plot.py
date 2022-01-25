@@ -25,7 +25,7 @@ class _DWSquared():
         self,
         title: str = "New Chart",
         chart_type: str = "d3-bars-stacked",
-        data: Union[pd.DataFrame, None] = None,
+        data=None,
         folder_id: str = "",
     ):
         _header = self.dw._auth_header
