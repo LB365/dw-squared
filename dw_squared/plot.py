@@ -27,7 +27,7 @@ class _DWSquared():
         chart_type: str = "d3-bars-stacked",
         data: Union[pd.DataFrame, None] = None,
         folder_id: str = "",
-    ) -> Union[Dict[Any, Any], None, Any]:
+    ):
         _header = self.dw._auth_header
         _header["content-type"] = "application/json"
         _data = {"title": title, "type": chart_type}
