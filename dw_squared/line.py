@@ -41,8 +41,8 @@ class Lines(DWSquared):
     @property
     def chart(self):
         if self._chart is None:
-            self._chart = self.dw.create_chart(
-                self.title, chart_type='d3-lines')
+            self._chart = self.create_chart(
+                self.title, chart_type='d3-lines', data=self._data)
         return self._chart
 
     def reshape_data(self, frame: pd.DataFrame):
